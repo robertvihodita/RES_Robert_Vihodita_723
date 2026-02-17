@@ -48,6 +48,21 @@ public class MissionControlService {
         return supplies;
     }
 
+    // TASK 2
+    public List<Astronaut> filter(String spacecraft) {
+
+        return astronauts.stream()
+
+                .filter(a ->
+                        a.getSpacecraft().equals(spacecraft)
+                                &&
+                                a.getStatus() == AstronautStatus.ACTIVE)
+
+                .collect(Collectors.toList());
+    }
+
+
+
 }
 
 
