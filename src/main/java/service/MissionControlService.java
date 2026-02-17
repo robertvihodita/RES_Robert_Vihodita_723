@@ -116,6 +116,63 @@ public class MissionControlService {
         return 0;
     }
 
+    // TASK 6
+    public void ranking() {
+
+        Map<Astronaut,Integer> scores =
+                new HashMap<>();
+
+        for (Astronaut a : astronauts) {
+
+            int eventScore =
+                    events.stream()
+                            .filter(e -> e.getAstronautId() == a.getId())
+                            .mapToInt(this::computePoints)
+                            .sum();
+
+            int supplyScore =
+                    supplies.stream()
+                            .filter(s -> s.getAstronautId() == a.getId())
+                            .mapToInt(Supply::getValue)
+                            .sum();
+
+            scores.put(a, eventScore + supplyScore);
+        }
+
+        List<Map.Entry<Astronaut,Integer>> sorted =
+                scores.entrySet()
+                        .stream()
+                        .sorted(
+                                Map.Entry
+                                        .<Astronaut,Integer>comparingByValue()
+                                        .reversed()
+                                        .thenComparing(e -> e.getKey().getName())
+                        )
+                        .limit(5)
+                        .collect(Collectors.toList());
+
+        System.out.println("Top 5 Astronauts:");
+
+        int i = 1;
+
+        for (var e : sorted) {
+
+            System.out.println(
+
+                    i++ + ". "
+                            + e.getKey().getName()
+                            + " ("
+                            + e.getKey().getSpacecraft()
+                            + ") -> "
+                            + e.getValue()
+            );
+        }
+
+        System.out.println(
+                "Leading spacecraft: "
+                        + sorted.get(0).getKey().getSpacecraft()
+        );
+    }
 
 }
 
