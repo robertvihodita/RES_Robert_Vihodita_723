@@ -1,17 +1,72 @@
 package com.example;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import model.*;
+import repository.*;
+import service.*;
+import java.util.*;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+public class Main {
+
+    public static void main(String[] args)
+            throws Exception {
+
+        IRepository<Astronaut> aRepo =
+                new AstronautRepository("astronauts.json");
+
+        IRepository<MissionEvent> eRepo =
+                new MissionEventRepository("events.json");
+
+        IRepository<Supply> sRepo =
+                new SupplyRepository("supplies.json");
+
+        MissionControlService service =
+                new MissionControlService(
+                        aRepo, eRepo, sRepo);
+
+        System.out.println(
+                "Astronauts loaded: "
+                        + service.getAstronauts().size());
+
+        System.out.println(
+                "Events loaded: "
+                        + service.getEvents().size());
+
+        System.out.println(
+                "Supplies loaded: "
+                        + service.getSupplies().size());
+
+        service.getAstronauts()
+                .forEach(System.out::println);
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Input spacecraft: ");
+
+        String input = sc.nextLine();
+
+        service.filter(input)
+                .forEach(System.out::println);
+
+        service.sort()
+                .forEach(System.out::println);
+
+        service.writeSortedReverse(
+                "astronauts_sorted.txt");
+
+        service.getEvents()
+                .stream()
+                .limit(5)
+                .forEach(e ->
+                        System.out.println(
+                                "Event "
+                                        + e.getId()
+                                        + " -> raw="
+                                        + e.getBasePoints()
+                                        + " -> computed="
+                                        + service.computePoints(e)
+                        )
+                );
+
+        service.ranking();
     }
 }
