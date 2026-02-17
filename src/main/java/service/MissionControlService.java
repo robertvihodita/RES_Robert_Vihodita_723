@@ -76,6 +76,22 @@ public class MissionControlService {
                 .collect(Collectors.toList());
     }
 
+    // TASK 4
+    public void writeSortedReverse(String filename)
+            throws Exception {
+
+        List<Astronaut> sorted = sort();
+
+        Collections.reverse(sorted);
+
+        PrintWriter pw = new PrintWriter(filename);
+
+        for (Astronaut a : sorted)
+            pw.println(a);
+
+        pw.close();
+    }
+
 
 }
 
